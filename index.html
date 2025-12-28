@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Request</title>
+</head>
+<body>
+  <h2>Send a Request</h2>
+
+  <input id="room" placeholder="Room number"><br><br>
+  <textarea id="msg" placeholder="Your request"></textarea><br><br>
+
+  <button onclick="send()">Send</button>
+
+  <script>
+    function send() {
+      fetch("https://efdemo.app.n8n.cloud/webhook-test/fa5f3f64-bbe6-4590-8f94-60d4d4c832cf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          room_number: document.getElementById("room").value,
+          request_text: document.getElementById("msg").value
+        })
+      }).then(() => alert("Sent"));
+    }
+  </script>
+</body>
+</html>
