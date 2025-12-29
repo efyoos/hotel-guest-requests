@@ -1,28 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Hotel Request</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send a Request</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .request-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .request-btn:hover {
+            border-color: #4a90e2;
+            background: #f8fafc;
+        }
+
+        .request-btn:active {
+            transform: scale(0.98);
+        }
+
+        .request-btn.selected {
+            border-color: #4a90e2;
+            background: #e3f2fd;
+        }
+
+        .emoji {
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #3a7bc8;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-message.sending {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (min-width: 600px) {
+            .button-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-  <h2>Send a Request</h2>
+    <div class="container">
+        <h1>Send a Request</h1>
+        
+        <form id="requestForm">
+            <div class="form-group">
+                <label for="roomNumber">Room Number *</label>
+                <input type="text" id="roomNumber" name="roomNumber" required placeholder="Enter your room number">
+            </div>
 
-  <input id="room" placeholder="Room number"><br><br>
-  <textarea id="msg" placeholder="Your request"></textarea><br><br>
+            <div class="button-grid">
+                <button type="button" class="request-btn" data-request="Housekeeping request">
+                    <span class="emoji">🧹</span>
+                    <span>Housekeeping</span>
+                </button>
+                <button type="button" class="request-btn" data-request="Maintenance issue">
+                    <span class="emoji">🛠</span>
+                    <span>Maintenance</span>
+                </button>
+                <button type="button" class="request-btn" data-request="Reception request">
+                    <span class="emoji">☎</span>
+                    <span>Reception</span>
+                </button>
+            </div>
 
-  <button onclick="send()">Send</button>
+            <div class="form-group">
+                <label for="requestText">Other request</label>
+                <textarea id="requestText" name="requestText" placeholder="Type your custom request here..."></textarea>
+            </div>
 
-  <script>
-    function send() {
-      fetch("https://efdemo.app.n8n.cloud/webhook-test/fa5f3f64-bbe6-4590-8f94-60d4d4c832cf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          room_number: document.getElementById("room").value,
-          request_text: document.getElementById("msg").value
-        })
-      }).then(() => alert("Sent"));
-    }
-  </script>
+            <button type="submit" class="submit-btn" id="submitBtn">Send Request</button>
+
+            <div class="status-message" id="statusMessage"></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('requestForm');
+        const roomNumberInput = document.getElementById('roomNumber');
+        const requestTextArea = document.getElementById('requestText');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const requestBtns = document.querySelectorAll('.request-btn');
+
+        const WEBHOOK_URL = 'https://efdemo.app.n8n.cloud/webhook-test/REPLACE_WITH_REAL_ID';
+        const HOTEL_ID = 'H001';
+        const LANGUAGE = 'en';
+
+        requestBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                requestBtns.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                requestTextArea.value = this.dataset.request;
+            });
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const roomNumber = roomNumberInput.value.trim();
+            const requestText = requestTextArea.value.trim();
+
+            if (!roomNumber) {
+                showStatus('Please enter your room number', 'error');
+                return;
+            }
+
+            if (!requestText) {
+                showStatus('Please select a request type or enter a custom request', 'error');
+                return;
+            }
+
+            const payload = {
+                hotel_id: HOTEL_ID,
+                room_number: roomNumber,
+                language: LANGUAGE,
+                request_text: requestText
+            };
+
+            try {
+                submitBtn.disabled = true;
+                showStatus('Sending...', 'sending');
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showStatus('Request sent successfully', 'success');
+                    form.reset();
+                    requestBtns.forEach(b => b.classList.remove('selected'));
+                } else {
+                    showStatus('Failed to send request. Please try again.', 'error');
+                }
+            } catch (error) {
+                showStatus('Network error. Please check your connection and try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message ' + type;
+
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusMessage.className = 'status-message';
+                }, 5000);
+            }
+        }
+    </script>
 </body>
 </html>
