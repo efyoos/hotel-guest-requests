@@ -245,9 +245,17 @@
         
         <form id="requestForm">
             <div class="form-group">
-                <label for="roomNumber">Room Number *</label>
-                <input type="text" id="roomNumber" name="roomNumber" required placeholder="Enter your room number">
+                <label for="guestName">Guest Name *</label>
+                <input type="text" id="guestName" name="guest_name" required placeholder="Enter your name">
             </div>
+
+            <div class="form-group">
+                <label for="roomNumber">Room Number *</label>
+                <input type="text" id="roomNumber" name="room_number" required placeholder="Enter your room number">
+            </div>
+
+            <input type="hidden" name="category" id="categoryInput">
+            <input type="hidden" name="urgency" id="urgencyInput">
 
             <div class="category-view active" id="categoryView">
                 <div class="button-grid">
@@ -285,6 +293,7 @@
     <script>
         const form = document.getElementById('requestForm');
         const roomNumberInput = document.getElementById('roomNumber');
+        const guestNameInput = document.getElementById('guestName');
         const feedbackArea = document.getElementById('feedback');
         const submitBtn = document.getElementById('submitBtn');
         const progressBtn = document.getElementById('progressBtn');
@@ -431,6 +440,21 @@
                     document.querySelectorAll('.detailed-item').forEach(i => i.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedRequest = request;
+
+                    // Set hidden inputs dynamically
+                    const categoryMap = {
+                        housekeeping: 'housekeeping_request',
+                        maintenance: 'maintenance_request',
+                        reception: 'reception_request'
+                    };
+                    const urgencyMap = {
+                        housekeeping: 'medium',
+                        maintenance: 'high',
+                        reception: 'low'
+                    };
+
+                    document.getElementById('categoryInput').value = categoryMap[category];
+                    document.getElementById('urgencyInput').value = urgencyMap[category];
                 });
                 detailedList.appendChild(item);
             });
@@ -459,8 +483,14 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const guestName = guestNameInput.value.trim();
             const roomNumber = roomNumberInput.value.trim();
             const feedback = feedbackArea.value.trim();
+
+            if (!guestName) {
+                showStatus('Please enter your name', 'error');
+                return;
+            }
 
             if (!roomNumber) {
                 showStatus('Please enter your room number', 'error');
@@ -477,12 +507,18 @@
                 requestText += ' - Feedback: ' + feedback;
             }
 
+            const formData = new FormData(form);
             const payload = {
                 hotel_id: 'H001',
-                room_number: roomNumber,
                 language: 'en',
                 request_text: requestText
             };
+            
+            formData.forEach((value, key) => {
+                if (key !== 'feedback') {
+                    payload[key] = value;
+                }
+            });
 
             try {
                 submitBtn.disabled = true;
