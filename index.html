@@ -11,21 +11,69 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: white;
+            --text-primary: #333;
+            --text-secondary: #555;
+            --border-color: #e0e0e0;
+            --accent-color: #4a90e2;
+            --accent-hover: #3a7bc8;
+            --hover-bg: #f8fafc;
+            --selected-bg: #e3f2fd;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+            --accent-color: #5ba3f5;
+            --accent-hover: #4a90e2;
+            --hover-bg: #383838;
+            --selected-bg: #2a4a6a;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             padding: 20px;
             min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 500px;
             margin: 0 auto;
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .theme-toggle, .lang-switch {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover, .lang-switch:hover {
+            border-color: var(--accent-color);
         }
 
         h1 {
@@ -33,13 +81,13 @@
             font-weight: 600;
             margin-bottom: 24px;
             text-align: center;
-            color: #1a1a1a;
+            color: var(--text-primary);
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: #4a90e2;
+            color: var(--accent-color);
             font-size: 16px;
             cursor: pointer;
             margin-bottom: 16px;
@@ -54,14 +102,14 @@
 
         .button-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 24px;
         }
 
         .request-btn {
-            background: white;
-            border: 2px solid #e0e0e0;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 18px;
             font-size: 16px;
@@ -70,27 +118,25 @@
             transition: all 0.2s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            text-align: left;
+            text-align: center;
+            flex-direction: column;
+            color: var(--text-primary);
         }
 
         .request-btn:hover {
-            border-color: #4a90e2;
-            background: #f8fafc;
+            border-color: var(--accent-color);
+            background: var(--hover-bg);
         }
 
         .request-btn:active {
             transform: scale(0.98);
         }
 
-        .request-btn.selected {
-            border-color: #4a90e2;
-            background: #e3f2fd;
-        }
-
         .emoji {
-            font-size: 24px;
-            min-width: 24px;
+            font-size: 32px;
+            min-width: 32px;
         }
 
         .category-view,
@@ -103,32 +149,74 @@
             display: block;
         }
 
-        .detailed-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .detailed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         .detailed-item {
-            background: white;
-            border: 2px solid #e0e0e0;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            padding: 14px;
-            font-size: 15px;
+            padding: 16px 8px;
             cursor: pointer;
             transition: all 0.2s;
-            text-align: left;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .detailed-item .emoji {
+            font-size: 28px;
+        }
+
+        .detailed-item .label {
+            font-size: 11px;
+            line-height: 1.2;
         }
 
         .detailed-item:hover {
-            border-color: #4a90e2;
-            background: #f8fafc;
+            border-color: var(--accent-color);
+            background: var(--hover-bg);
         }
 
         .detailed-item.selected {
-            border-color: #4a90e2;
-            background: #e3f2fd;
+            border-color: var(--accent-color);
+            background: var(--selected-bg);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .quantity-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-display {
+            font-size: 16px;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
         }
 
         .form-group {
@@ -140,24 +228,26 @@
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 8px;
-            color: #555;
+            color: var(--text-secondary);
         }
 
         input[type="text"],
         textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
             transition: border-color 0.2s;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         input[type="text"]:focus,
         textarea:focus {
             outline: none;
-            border-color: #4a90e2;
+            border-color: var(--accent-color);
         }
 
         textarea {
@@ -167,7 +257,7 @@
 
         .submit-btn {
             width: 100%;
-            background: #4a90e2;
+            background: var(--accent-color);
             color: white;
             border: none;
             border-radius: 8px;
@@ -179,7 +269,7 @@
         }
 
         .submit-btn:hover {
-            background: #3a7bc8;
+            background: var(--accent-hover);
         }
 
         .submit-btn:disabled {
@@ -231,66 +321,578 @@
             color: #721c24;
         }
 
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .footer img {
+            height: 48px;
+            width: auto;
+        }
+
+        .total-price-box {
+            background: var(--selected-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .total-price-box.show {
+            display: block;
+        }
+
+        .total-price-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .total-price-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
         @media (min-width: 600px) {
             .button-grid {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .detailed-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="back-btn" id="backBtn">← Back</button>
-        <h1 id="pageTitle">Send a Request</h1>
+        <div class="top-controls">
+            <select class="lang-switch" id="langSwitch">
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="ar">🇩🇿 العربية</option>
+            </select>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+
+        <button class="back-btn" id="backBtn">← <span data-translate="back">Back</span></button>
+        <h1 id="pageTitle" data-translate="title">Send a Request</h1>
         
         <form id="requestForm">
             <div class="form-group">
-                <label for="guestName">Guest Name *</label>
-                <input type="text" id="guestName" name="guest_name" required placeholder="Enter your name">
+                <label for="guestName" data-translate="guestName">Guest Name *</label>
+                <input type="text" id="guestName" name="guest_name" required placeholder="">
             </div>
 
             <div class="form-group">
-                <label for="roomNumber">Room Number *</label>
-                <input type="text" id="roomNumber" name="room_number" required placeholder="Enter your room number">
+                <label for="roomNumber" data-translate="roomNumber">Room Number *</label>
+                <input type="text" id="roomNumber" name="room_number" required placeholder="">
             </div>
 
             <input type="hidden" name="category" id="categoryInput">
             <input type="hidden" name="urgency" id="urgencyInput">
+            <input type="hidden" name="quantity" id="quantityInput" value="1">
 
             <div class="category-view active" id="categoryView">
                 <div class="button-grid">
                     <button type="button" class="request-btn" data-category="housekeeping">
                         <span class="emoji">🧹</span>
-                        <span>Housekeeping</span>
+                        <span data-translate="housekeeping">Housekeeping</span>
                     </button>
                     <button type="button" class="request-btn" data-category="maintenance">
                         <span class="emoji">🛠</span>
-                        <span>Maintenance</span>
+                        <span data-translate="maintenance">Maintenance</span>
                     </button>
                     <button type="button" class="request-btn" data-category="reception">
                         <span class="emoji">☎</span>
-                        <span>Reception</span>
+                        <span data-translate="reception">Reception</span>
+                    </button>
+                    <button type="button" class="request-btn" data-category="roomservice">
+                        <span class="emoji">🍽️</span>
+                        <span data-translate="roomservice">Room Service</span>
                     </button>
                 </div>
             </div>
 
             <div class="detailed-view" id="detailedView">
-                <div class="detailed-list" id="detailedList"></div>
+                <div class="detailed-grid" id="detailedList"></div>
+                
+                <div class="total-price-box" id="totalPriceBox">
+                    <div class="total-price-label" data-translate="totalPrice">Total Price</div>
+                    <div class="total-price-amount" id="totalPriceAmount">0 DA</div>
+                </div>
+
+                <div id="quantityContainer" style="display: none; margin-bottom: 20px; text-align: center;">
+                    <label data-translate="quantity">Quantity</label>
+                    <div class="quantity-control">
+                        <button type="button" class="quantity-btn" id="decreaseQty">−</button>
+                        <span class="quantity-display" id="quantityDisplay">1</span>
+                        <button type="button" class="quantity-btn" id="increaseQty">+</button>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="feedback">Feedback (Optional)</label>
-                <textarea id="feedback" name="feedback" placeholder="Add any additional comments..."></textarea>
+                <label for="feedback" data-translate="feedback">Feedback (Optional)</label>
+                <textarea id="feedback" name="feedback" placeholder=""></textarea>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">Send Request</button>
-            <button type="button" class="progress-btn" id="progressBtn">Request in Progress</button>
+            <button type="submit" class="submit-btn" id="submitBtn" data-translate="sendRequest">Send Request</button>
+            <button type="button" class="progress-btn" id="progressBtn" data-translate="requestProgress">Request in Progress</button>
 
             <div class="status-message" id="statusMessage"></div>
         </form>
+
+        <div class="footer">
+            <span>Developed by EFYOOS</span>
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzFhM2M1YSIvPgo8cmVjdCB4PSIyNTAiIHk9IjEwMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiM2Yzc1N2QiLz4KPHJlY3QgeD0iMTAwIiB5PSIyNTAiIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNGY4YThhIi8+CjxyZWN0IHg9IjI1MCIgeT0iMjUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzY3Nzg4YSIvPgo8Y2lyY2xlIGN4PSIyNTAiIGN5PSIyNTAiIHI9IjgwIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjUwIDIyMEwyMjAgMjgwSDI4MEwyNTAgMjIwWiIgZmlsbD0iIzRmOGE4YSIvPgo8cGF0aCBkPSJNMjUwIDI4MEwyMjAgMzIwSDI4MEwyNTAgMjgwWiIgZmlsbD0iIzFhM2M1YSIvPgo8L3N2Zz4=" alt="EFYOOS Logo">
+        </div>
     </div>
 
     <script>
+        const translations = {
+            en: {
+                title: "Send a Request",
+                back: "Back",
+                guestName: "Guest Name *",
+                roomNumber: "Room Number *",
+                housekeeping: "Housekeeping",
+                maintenance: "Maintenance",
+                reception: "Reception",
+                roomservice: "Room Service",
+                feedback: "Feedback (Optional)",
+                sendRequest: "Send Request",
+                requestProgress: "Request in Progress",
+                quantity: "Quantity",
+                housekeepingTitle: "Housekeeping Requests",
+                maintenanceTitle: "Maintenance Requests",
+                receptionTitle: "Reception Requests",
+                roomserviceTitle: "Room Service Menu",
+                pleaseEnterName: "Please enter your name",
+                pleaseEnterRoom: "Please enter your room number",
+                pleaseSelectRequest: "Please select a request",
+                sending: "Sending...",
+                requestSentSuccess: "Request sent successfully!",
+                requestFailed: "Failed to send request. Please try again.",
+                networkError: "Network error: ",
+                poweredBy: "Powered by",
+                totalPrice: "Total Price"
+            },
+            fr: {
+                title: "Envoyer une Demande",
+                back: "Retour",
+                guestName: "Nom du Client *",
+                roomNumber: "Numéro de Chambre *",
+                housekeeping: "Ménage",
+                maintenance: "Maintenance",
+                reception: "Réception",
+                roomservice: "Service de Chambre",
+                feedback: "Commentaires (Facultatif)",
+                sendRequest: "Envoyer la Demande",
+                requestProgress: "Demande en Cours",
+                quantity: "Quantité",
+                housekeepingTitle: "Demandes de Ménage",
+                maintenanceTitle: "Demandes de Maintenance",
+                receptionTitle: "Demandes de Réception",
+                roomserviceTitle: "Menu du Service",
+                pleaseEnterName: "Veuillez entrer votre nom",
+                pleaseEnterRoom: "Veuillez entrer votre numéro de chambre",
+                pleaseSelectRequest: "Veuillez sélectionner une demande",
+                sending: "Envoi en cours...",
+                requestSentSuccess: "Demande envoyée avec succès!",
+                requestFailed: "Échec de l'envoi. Veuillez réessayer.",
+                networkError: "Erreur réseau: ",
+                poweredBy: "Propulsé par",
+                totalPrice: "Prix Total"
+            },
+            ar: {
+                title: "إرسال طلب",
+                back: "رجوع",
+                guestName: "اسم الضيف *",
+                roomNumber: "رقم الغرفة *",
+                housekeeping: "التدبير المنزلي",
+                maintenance: "الصيانة",
+                reception: "الاستقبال",
+                roomservice: "خدمة الغرف",
+                feedback: "ملاحظات (اختياري)",
+                sendRequest: "إرسال الطلب",
+                requestProgress: "الطلب قيد التنفيذ",
+                quantity: "الكمية",
+                housekeepingTitle: "طلبات التدبير المنزلي",
+                maintenanceTitle: "طلبات الصيانة",
+                receptionTitle: "طلبات الاستقبال",
+                roomserviceTitle: "قائمة خدمة الغرف",
+                pleaseEnterName: "الرجاء إدخال اسمك",
+                pleaseEnterRoom: "الرجاء إدخال رقم غرفتك",
+                pleaseSelectRequest: "الرجاء اختيار طلب",
+                sending: "جاري الإرسال...",
+                requestSentSuccess: "تم إرسال الطلب بنجاح!",
+                requestFailed: "فشل إرسال الطلب. حاول مرة أخرى.",
+                networkError: "خطأ في الشبكة: ",
+                poweredBy: "مدعوم بواسطة",
+                totalPrice: "السعر الإجمالي"
+            }
+        };
+
+        const requestsTranslations = {
+            en: {
+                housekeeping: [
+                    { emoji: "🧻", label: "Towels" },
+                    { emoji: "🛏️", label: "Pillows" },
+                    { emoji: "🛏️", label: "Bedsheets" },
+                    { emoji: "🧹", label: "Cleaning" },
+                    { emoji: "☕", label: "Coffee/Tea" },
+                    { emoji: "🧻", label: "Toilet Paper" },
+                    { emoji: "👔", label: "Hangers" },
+                    { emoji: "🧺", label: "Towel Replace" },
+                    { emoji: "🌙", label: "Turndown" },
+                    { emoji: "🗑️", label: "Trash" },
+                    { emoji: "🛁", label: "Bath Mat" },
+                    { emoji: "🛌", label: "Blankets" },
+                    { emoji: "🧹", label: "Not Cleaned" },
+                    { emoji: "🛏️", label: "Pillow Type" },
+                    { emoji: "👶", label: "Crib Bedding" },
+                    { emoji: "🧼", label: "Sanitize" },
+                    { emoji: "⏰", label: "Early Clean" },
+                    { emoji: "🧺", label: "Laundry" },
+                    { emoji: "💧", label: "Minibar Water" },
+                    { emoji: "🥿", label: "Slippers" }
+                ],
+                maintenance: [
+                    { emoji: "❄️", label: "AC Not Cool" },
+                    { emoji: "📺", label: "TV Remote" },
+                    { emoji: "🚽", label: "Toilet Clog" },
+                    { emoji: "🚿", label: "Drain Block" },
+                    { emoji: "🔥", label: "Hot Water" },
+                    { emoji: "💡", label: "Light Bulb" },
+                    { emoji: "🔒", label: "Safe Box" },
+                    { emoji: "📶", label: "WiFi Weak" },
+                    { emoji: "🚪", label: "Door Lock" },
+                    { emoji: "🪟", label: "Window" },
+                    { emoji: "🧊", label: "Mini Fridge" },
+                    { emoji: "🔌", label: "Outlet" },
+                    { emoji: "🚰", label: "Sink Leak" },
+                    { emoji: "❄️", label: "AC Noise" },
+                    { emoji: "📺", label: "TV Signal" },
+                    { emoji: "🚿", label: "Low Pressure" },
+                    { emoji: "💡", label: "Bedside Lamp" },
+                    { emoji: "🚽", label: "Toilet Water" },
+                    { emoji: "🚪", label: "Balcony Door" },
+                    { emoji: "❄️", label: "AC Leak" }
+                ],
+                reception: [
+                    { emoji: "⏰", label: "Wake-up 7AM" },
+                    { emoji: "🏨", label: "Late Checkout" },
+                    { emoji: "🚕", label: "Taxi" },
+                    { emoji: "⬆️", label: "Room Upgrade" },
+                    { emoji: "🍳", label: "Breakfast" },
+                    { emoji: "📶", label: "WiFi Pass" },
+                    { emoji: "🖨️", label: "Print Docs" },
+                    { emoji: "🧾", label: "Invoice" },
+                    { emoji: "🗺️", label: "City Map" },
+                    { emoji: "🍽️", label: "Restaurant" },
+                    { emoji: "🧳", label: "Luggage" },
+                    { emoji: "🏨", label: "Early Checkin" },
+                    { emoji: "✈️", label: "Airport" },
+                    { emoji: "📅", label: "Extend Stay" },
+                    { emoji: "💳", label: "Bill Check" },
+                    { emoji: "🔑", label: "Extra Key" },
+                    { emoji: "🧹", label: "Schedule Info" },
+                    { emoji: "🔄", label: "Change Room" },
+                    { emoji: "🚐", label: "Shuttle" },
+                    { emoji: "🗺️", label: "Tours" }
+                ],
+                roomservice: [
+                    { emoji: "🍔", label: "Burger" },
+                    { emoji: "🍕", label: "Pizza" },
+                    { emoji: "🥗", label: "Salad" },
+                    { emoji: "🍝", label: "Pasta" },
+                    { emoji: "🍱", label: "Sushi" },
+                    { emoji: "🥙", label: "Sandwich" },
+                    { emoji: "☕", label: "Coffee" },
+                    { emoji: "🥤", label: "Soft Drink" },
+                    { emoji: "🍰", label: "Dessert" },
+                    { emoji: "🍷", label: "Wine" },
+                    { emoji: "🥞", label: "Pancakes" },
+                    { emoji: "🍜", label: "Soup" }
+                ]
+            },
+            fr: {
+                housekeeping: [
+                    { emoji: "🧻", label: "Serviettes" },
+                    { emoji: "🛏️", label: "Oreillers" },
+                    { emoji: "🛏️", label: "Draps" },
+                    { emoji: "🧹", label: "Nettoyage" },
+                    { emoji: "☕", label: "Café/Thé" },
+                    { emoji: "🧻", label: "Papier Toilette" },
+                    { emoji: "👔", label: "Cintres" },
+                    { emoji: "🧺", label: "Changer Serviettes" },
+                    { emoji: "🌙", label: "Service Soir" },
+                    { emoji: "🗑️", label: "Poubelle" },
+                    { emoji: "🛁", label: "Tapis de Bain" },
+                    { emoji: "🛌", label: "Couvertures" },
+                    { emoji: "🧹", label: "Pas Nettoyé" },
+                    { emoji: "🛏️", label: "Type Oreiller" },
+                    { emoji: "👶", label: "Lit Bébé" },
+                    { emoji: "🧼", label: "Désinfecter" },
+                    { emoji: "⏰", label: "Nettoyage Tôt" },
+                    { emoji: "🧺", label: "Blanchisserie" },
+                    { emoji: "💧", label: "Eau Minibar" },
+                    { emoji: "🥿", label: "Pantoufles" }
+                ],
+                maintenance: [
+                    { emoji: "❄️", label: "Clim Froide" },
+                    { emoji: "📺", label: "Télécommande" },
+                    { emoji: "🚽", label: "Toilette Bloquée" },
+                    { emoji: "🚿", label: "Drain Bloqué" },
+                    { emoji: "🔥", label: "Eau Chaude" },
+                    { emoji: "💡", label: "Ampoule" },
+                    { emoji: "🔒", label: "Coffre-fort" },
+                    { emoji: "📶", label: "WiFi Faible" },
+                    { emoji: "🚪", label: "Serrure Porte" },
+                    { emoji: "🪟", label: "Fenêtre" },
+                    { emoji: "🧊", label: "Mini Frigo" },
+                    { emoji: "🔌", label: "Prise" },
+                    { emoji: "🚰", label: "Fuite Lavabo" },
+                    { emoji: "❄️", label: "Bruit Clim" },
+                    { emoji: "📺", label: "Signal TV" },
+                    { emoji: "🚿", label: "Basse Pression" },
+                    { emoji: "💡", label: "Lampe Chevet" },
+                    { emoji: "🚽", label: "Eau Toilette" },
+                    { emoji: "🚪", label: "Porte Balcon" },
+                    { emoji: "❄️", label: "Fuite Clim" }
+                ],
+                reception: [
+                    { emoji: "⏰", label: "Réveil 7h" },
+                    { emoji: "🏨", label: "Départ Tardif" },
+                    { emoji: "🚕", label: "Taxi" },
+                    { emoji: "⬆️", label: "Surclassement" },
+                    { emoji: "🍳", label: "Petit-déj" },
+                    { emoji: "📶", label: "Mot WiFi" },
+                    { emoji: "🖨️", label: "Imprimer" },
+                    { emoji: "🧾", label: "Facture" },
+                    { emoji: "🗺️", label: "Plan Ville" },
+                    { emoji: "🍽️", label: "Restaurant" },
+                    { emoji: "🧳", label: "Bagages" },
+                    { emoji: "🏨", label: "Arrivée Tôt" },
+                    { emoji: "✈️", label: "Aéroport" },
+                    { emoji: "📅", label: "Prolonger" },
+                    { emoji: "💳", label: "Facture Détails" },
+                    { emoji: "🔑", label: "Clé Extra" },
+                    { emoji: "🧹", label: "Info Horaire" },
+                    { emoji: "🔄", label: "Changer Chambre" },
+                    { emoji: "🚐", label: "Navette" },
+                    { emoji: "🗺️", label: "Visites" }
+                ],
+                roomservice: [
+                    { emoji: "🍔", label: "Burger" },
+                    { emoji: "🍕", label: "Pizza" },
+                    { emoji: "🥗", label: "Salade" },
+                    { emoji: "🍝", label: "Pâtes" },
+                    { emoji: "🍱", label: "Sushi" },
+                    { emoji: "🥙", label: "Sandwich" },
+                    { emoji: "☕", label: "Café" },
+                    { emoji: "🥤", label: "Boisson" },
+                    { emoji: "🍰", label: "Dessert" },
+                    { emoji: "🍷", label: "Vin" },
+                    { emoji: "🥞", label: "Crêpes" },
+                    { emoji: "🍜", label: "Soupe" }
+                ]
+            },
+            ar: {
+                housekeeping: [
+                    { emoji: "🧻", label: "فوطة" },
+                    { emoji: "🛏️", label: "مخدات" },
+                    { emoji: "🛏️", label: "ملايات" },
+                    { emoji: "🧹", label: "تنظيف الغرفة" },
+                    { emoji: "☕", label: "قهوة وشاي" },
+                    { emoji: "🧻", label: "ورق صحي" },
+                    { emoji: "👔", label: "علّاقات ملابس" },
+                    { emoji: "🧺", label: "تبديل الفوطة" },
+                    { emoji: "🌙", label: "خدمة مسائية" },
+                    { emoji: "🗑️", label: "إفراغ الزبالة" },
+                    { emoji: "🛁", label: "سجادة الحمام" },
+                    { emoji: "🛌", label: "بطانيات إضافية" },
+                    { emoji: "🧹", label: "الغرفة ماتنضفتش" },
+                    { emoji: "🛏️", label: "نوع المخدة" },
+                    { emoji: "👶", label: "سرير الطفل" },
+                    { emoji: "🧼", label: "تعقيم الغرفة" },
+                    { emoji: "⏰", label: "تنظيف بكري" },
+                    { emoji: "🧺", label: "غسيل الملابس" },
+                    { emoji: "💧", label: "ماء البار الصغير" },
+                    { emoji: "🥿", label: "شباشب" }
+                ],
+                maintenance: [
+                    { emoji: "❄️", label: "الكليماتيزور مايبردش" },
+                    { emoji: "📺", label: "تيليكوموند التلفزة" },
+                    { emoji: "🚽", label: "التواليت مسدودة" },
+                    { emoji: "🚿", label: "الدوش مسدود" },
+                    { emoji: "🔥", label: "الماء السخون" },
+                    { emoji: "💡", label: "اللامبة محروقة" },
+                    { emoji: "🔒", label: "الخزينة" },
+                    { emoji: "📶", label: "الويفي ضعيف" },
+                    { emoji: "🚪", label: "قفل الباب" },
+                    { emoji: "🪟", label: "الشباك" },
+                    { emoji: "🧊", label: "الثلاجة الصغيرة" },
+                    { emoji: "🔌", label: "البريز" },
+                    { emoji: "🚰", label: "الحوض يقطر" },
+                    { emoji: "❄️", label: "لاكليم يدير الحس" },
+                    { emoji: "📺", label: "التلفزة مافيهاش سينيال" },
+                    { emoji: "🚿", label: "الماء ضعيف" },
+                    { emoji: "💡", label: "لامبة الطاولة" },
+                    { emoji: "🚽", label: "التواليت تضيع" },
+                    { emoji: "🚪", label: "باب البلكونة" },
+                    { emoji: "❄️", label: "الكليم يقطر ماء" }
+                ],
+                reception: [
+                    { emoji: "⏰", label: "فيقوني السبعة تع صباح" },
+                    { emoji: "🏨", label: "خروج متأخر" },
+                    { emoji: "🚕", label: "طاكسي" },
+                    { emoji: "⬆️", label: "ترقية الشامبر" },
+                    { emoji: "🍳", label: "الفطور" },
+                    { emoji: "📶", label: "مو دوباس تاع الواي فاي" },
+                    { emoji: "🖨️", label: "طباعة" },
+                    { emoji: "🧾", label: "الفاتورة" },
+                    { emoji: "🗺️", label: "خريطة المدينة" },
+                    { emoji: "🍽️", label: "حجز مطعم" },
+                    { emoji: "🧳", label: "مساعدة في الحقائب" },
+                    { emoji: "🏨", label: "دخول بكري" },
+                    { emoji: "✈️", label: "المطار" },
+                    { emoji: "📅", label: "زيادة الإقامة" },
+                    { emoji: "💳", label: "توضيح الفاتورة" },
+                    { emoji: "🔑", label: "مفتاح زيادة" },
+                    { emoji: "🧹", label: "معلومات التنظيف" },
+                    { emoji: "🔄", label: "تبديل الشامبر" },
+                    { emoji: "🚐", label: "النقل" },
+                    { emoji: "🗺️", label: "الجولات السياحية" }
+                ],
+                roomservice: [
+                    { emoji: "🍔", label: "همبرغر" },
+                    { emoji: "🍕", label: "بيتزا" },
+                    { emoji: "🥗", label: "سلطة" },
+                    { emoji: "🍝", label: "معكرونة" },
+                    { emoji: "🥙", label: "شاورما" },
+                    { emoji: "🍖", label: "مشوي" },
+                    { emoji: "🥘", label: "كسكسي" },
+                    { emoji: "🍲", label: "شربة" },
+                    { emoji: "🥙", label: "طاكوس" },
+                    { emoji: "☕", label: "قهوة" },
+                    { emoji: "🥤", label: "مشروب غازي" },
+                    { emoji: "🫖", label: "أتاي" },
+                    { emoji: "🍰", label: "حلويات" },
+                    { emoji: "🥞", label: "مسمن" },
+                    { emoji: "🧁", label: "مقروط" },
+                    { emoji: "🍯", label: "بغرير" }
+                ]
+            }
+        };
+
+        const requests = {
+            housekeeping: [
+                { emoji: "🧻", label: "Towels", text: "Please send extra towels to the room" },
+                { emoji: "🛏️", label: "Pillows", text: "Can we get two extra pillows" },
+                { emoji: "🛏️", label: "Bedsheets", text: "Need fresh bedsheets" },
+                { emoji: "🧹", label: "Cleaning", text: "Request room cleaning now" },
+                { emoji: "☕", label: "Coffee/Tea", text: "Please refill coffee and tea supplies" },
+                { emoji: "🧻", label: "Toilet Paper", text: "Can we get extra toilet paper" },
+                { emoji: "👔", label: "Hangers", text: "Need additional hangers in the closet" },
+                { emoji: "🧺", label: "Towel Replace", text: "Please replace used towels" },
+                { emoji: "🌙", label: "Turndown", text: "Request evening turndown service" },
+                { emoji: "🗑️", label: "Trash", text: "Can you empty the trash bin" },
+                { emoji: "🛁", label: "Bath Mat", text: "Need a fresh bath mat" },
+                { emoji: "🛌", label: "Blankets", text: "Please bring extra blankets" },
+                { emoji: "🧹", label: "Not Cleaned", text: "Room hasn't been cleaned today" },
+                { emoji: "🛏️", label: "Pillow Type", text: "Request pillow change (firm/soft)" },
+                { emoji: "👶", label: "Crib Bedding", text: "Need baby crib bedding" },
+                { emoji: "🧼", label: "Sanitize", text: "Please sanitize the room" },
+                { emoji: "⏰", label: "Early Clean", text: "Request room cleaning before 10 AM" },
+                { emoji: "🧺", label: "Laundry", text: "Need laundry pickup" },
+                { emoji: "💧", label: "Minibar Water", text: "Please refill minibar water" },
+                { emoji: "🥿", label: "Slippers", text: "Need extra slippers" }
+            ],
+            maintenance: [
+                { emoji: "❄️", label: "AC Not Cool", text: "Air conditioner is not cooling" },
+                { emoji: "📺", label: "TV Remote", text: "TV remote not working" },
+                { emoji: "🚽", label: "Toilet Clog", text: "Toilet is clogged" },
+                { emoji: "🚿", label: "Drain Block", text: "Shower drain is blocked" },
+                { emoji: "🔥", label: "Hot Water", text: "Hot water not working" },
+                { emoji: "💡", label: "Light Bulb", text: "Light bulb is burnt out" },
+                { emoji: "🔒", label: "Safe Box", text: "Safe box is not opening" },
+                { emoji: "📶", label: "WiFi Weak", text: "Wi-Fi signal is weak in room" },
+                { emoji: "🚪", label: "Door Lock", text: "Door lock not working properly" },
+                { emoji: "🪟", label: "Window", text: "Window won't close" },
+                { emoji: "🧊", label: "Mini Fridge", text: "Mini fridge not cooling" },
+                { emoji: "🔌", label: "Outlet", text: "Electrical outlet not working" },
+                { emoji: "🚰", label: "Sink Leak", text: "Bathroom sink leaking" },
+                { emoji: "❄️", label: "AC Noise", text: "AC making loud noise" },
+                { emoji: "📺", label: "TV Signal", text: "TV has no signal" },
+                { emoji: "🚿", label: "Low Pressure", text: "Shower pressure is very low" },
+                { emoji: "💡", label: "Bedside Lamp", text: "Bedside lamp not turning on" },
+                { emoji: "🚽", label: "Toilet Water", text: "Toilet keeps running water" },
+                { emoji: "🚪", label: "Balcony Door", text: "Balcony door stuck" },
+                { emoji: "❄️", label: "AC Leak", text: "Air conditioner leaking water" }
+            ],
+            reception: [
+                { emoji: "⏰", label: "Wake-up 7AM", text: "Request wake-up call at 7 AM" },
+                { emoji: "🏨", label: "Late Checkout", text: "Can I check out late" },
+                { emoji: "🚕", label: "Taxi", text: "Need taxi booking" },
+                { emoji: "⬆️", label: "Room Upgrade", text: "Request room upgrade" },
+                { emoji: "🍳", label: "Breakfast", text: "What time is breakfast" },
+                { emoji: "📶", label: "WiFi Pass", text: "Need Wi-Fi password" },
+                { emoji: "🖨️", label: "Print Docs", text: "Can you print documents" },
+                { emoji: "🧾", label: "Invoice", text: "Request invoice copy" },
+                { emoji: "🗺️", label: "City Map", text: "Need city map" },
+                { emoji: "🍽️", label: "Restaurant", text: "Can you book a restaurant" },
+                { emoji: "🧳", label: "Luggage", text: "Request luggage assistance" },
+                { emoji: "🏨", label: "Early Checkin", text: "Early check-in request" },
+                { emoji: "✈️", label: "Airport", text: "Need directions to airport" },
+                { emoji: "📅", label: "Extend Stay", text: "Can I extend my stay" },
+                { emoji: "💳", label: "Bill Check", text: "Request bill clarification" },
+                { emoji: "🔑", label: "Extra Key", text: "Need extra room key" },
+                { emoji: "🧹", label: "Schedule Info", text: "Request housekeeping schedule info" },
+                { emoji: "🔄", label: "Change Room", text: "Can I change room" },
+                { emoji: "🚐", label: "Shuttle", text: "Request shuttle service" },
+                { emoji: "🗺️", label: "Tours", text: "Need tour information" }
+            ],
+            roomservice: [
+                { emoji: "🍔", label: "Burger", text: "Burger", price: "300 DA", priceNum: 300 },
+                { emoji: "🍕", label: "Pizza", text: "Pizza", price: "500 DA", priceNum: 500 },
+                { emoji: "🥗", label: "Salad", text: "Salad", price: "300 DA", priceNum: 300 },
+                { emoji: "🍝", label: "Pasta", text: "Pasta", price: "500 DA", priceNum: 500 },
+                { emoji: "🥙", label: "Shawarma", text: "Shawarma", price: "500 DA", priceNum: 500 },
+                { emoji: "🍖", label: "Grilled Meat", text: "Grilled Meat", price: "2000 DA", priceNum: 2000 },
+                { emoji: "🥘", label: "Couscous", text: "Couscous", price: "1500 DA", priceNum: 1500 },
+                { emoji: "🍲", label: "Shorba", text: "Shorba", price: "300 DA", priceNum: 300 },
+                { emoji: "🥙", label: "Tacos", text: "Tacos", price: "700 DA", priceNum: 700 },
+                { emoji: "☕", label: "Coffee", text: "Coffee", price: "100 DA", priceNum: 100 },
+                { emoji: "🥤", label: "Soft Drink", text: "Soft Drink", price: "200 DA", priceNum: 200 },
+                { emoji: "🫖", label: "Algerian Tea", text: "Algerian Tea", price: "70 DA", priceNum: 70 },
+                { emoji: "🍰", label: "Dessert", text: "Dessert", price: "150 DA", priceNum: 150 },
+                { emoji: "🥞", label: "Msemen", text: "Msemen", price: "100 DA", priceNum: 100 },
+                { emoji: "🧁", label: "Makrout", text: "Makrout", price: "80 DA", priceNum: 80 },
+                { emoji: "🍯", label: "Baghrir", text: "Baghrir", price: "80 DA", priceNum: 80 }
+            ]
+        };
+
+        let currentLang = 'en';
+        let currentTheme = 'light';
+        let selectedRequest = '';
+        let currentCategory = '';
+        let quantity = 1;
+        let selectedItemPrice = 0;
+
         const form = document.getElementById('requestForm');
         const roomNumberInput = document.getElementById('roomNumber');
         const guestNameInput = document.getElementById('guestName');
@@ -304,108 +906,55 @@
         const backBtn = document.getElementById('backBtn');
         const pageTitle = document.getElementById('pageTitle');
         const categoryBtns = document.querySelectorAll('[data-category]');
+        const themeToggle = document.getElementById('themeToggle');
+        const langSwitch = document.getElementById('langSwitch');
+        const quantityContainer = document.getElementById('quantityContainer');
+        const quantityDisplay = document.getElementById('quantityDisplay');
+        const decreaseQty = document.getElementById('decreaseQty');
+        const increaseQty = document.getElementById('increaseQty');
+        const totalPriceBox = document.getElementById('totalPriceBox');
+        const totalPriceAmount = document.getElementById('totalPriceAmount');
 
-        let selectedRequest = '';
-        let currentCategory = '';
+        function updateTotalPrice() {
+            const total = selectedItemPrice * quantity;
+            totalPriceAmount.textContent = total.toLocaleString() + ' DA';
+        }
 
-        const requests = {
-            housekeeping: [
-                "Please send extra towels to the room",
-                "Can we get two extra pillows",
-                "Need fresh bedsheets",
-                "Request room cleaning now",
-                "Please refill coffee and tea supplies",
-                "Can we get extra toilet paper",
-                "Need additional hangers in the closet",
-                "Please replace used towels",
-                "Request evening turndown service",
-                "Can you empty the trash bin",
-                "Need a fresh bath mat",
-                "Please bring extra blankets",
-                "Room hasn't been cleaned today",
-                "Request pillow change (firm/soft)",
-                "Need baby crib bedding",
-                "Please sanitize the room",
-                "Request room cleaning before 10 AM",
-                "Need laundry pickup",
-                "Please refill minibar water",
-                "Need extra slippers",
-                "Request ironing service",
-                "Please bring extra glasses",
-                "Room smells, needs refresh",
-                "Request towel replacement immediately",
-                "Need extra sheets for sofa bed",
-                "Please clean balcony area",
-                "Need extra trash bags",
-                "Request duvet change",
-                "Can you restock bathroom amenities",
-                "Please prepare room for early sleep"
-            ],
-            maintenance: [
-                "Air conditioner is not cooling",
-                "TV remote not working",
-                "Toilet is clogged",
-                "Shower drain is blocked",
-                "Hot water not working",
-                "Light bulb is burnt out",
-                "Safe box is not opening",
-                "Wi-Fi signal is weak in room",
-                "Door lock not working properly",
-                "Window won't close",
-                "Mini fridge not cooling",
-                "Electrical outlet not working",
-                "Bathroom sink leaking",
-                "AC making loud noise",
-                "TV has no signal",
-                "Shower pressure is very low",
-                "Bedside lamp not turning on",
-                "Toilet keeps running water",
-                "Balcony door stuck",
-                "Air conditioner leaking water",
-                "Curtains rail is broken",
-                "Smoke detector beeping",
-                "Room key card not working",
-                "Thermostat not responding",
-                "Bathroom fan not working",
-                "Broken chair in room",
-                "Faucet handle loose",
-                "Power keeps cutting in room",
-                "Strange smell from AC",
-                "Phone in room not working"
-            ],
-            reception: [
-                "Request wake-up call at 7 AM",
-                "Can I check out late",
-                "Need taxi booking",
-                "Request room upgrade",
-                "What time is breakfast",
-                "Need Wi-Fi password",
-                "Can you print documents",
-                "Request invoice copy",
-                "Need city map",
-                "Can you book a restaurant",
-                "Request luggage assistance",
-                "Early check-in request",
-                "Need directions to airport",
-                "Can I extend my stay",
-                "Request bill clarification",
-                "Need extra room key",
-                "Request housekeeping schedule info",
-                "Can I change room",
-                "Request shuttle service",
-                "Need tour information",
-                "Ask about spa availability",
-                "Request lost-and-found check",
-                "Need medical assistance info",
-                "Can you store luggage",
-                "Request quiet room",
-                "Ask about gym hours",
-                "Need exchange rate info",
-                "Request birthday arrangement",
-                "Can you call my room",
-                "Need help with payment issue"
-            ]
-        };
+        function updateTranslations() {
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key].replace(' *', '');
+                    } else {
+                        el.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+            
+            if (currentLang === 'ar') {
+                document.body.style.direction = 'rtl';
+            } else {
+                document.body.style.direction = 'ltr';
+            }
+        }
+
+        langSwitch.addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            updateTranslations();
+        });
+
+        themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️';
+                currentTheme = 'dark';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙';
+                currentTheme = 'light';
+            }
+        });
 
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -414,8 +963,24 @@
             });
         });
 
-        backBtn.addEventListener('click', function() {
-            showCategoryView();
+        backBtn.addEventListener('click', showCategoryView);
+
+        decreaseQty.addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityDisplay.textContent = quantity;
+                document.getElementById('quantityInput').value = quantity;
+                updateTotalPrice();
+            }
+        });
+
+        increaseQty.addEventListener('click', () => {
+            if (quantity < 10) {
+                quantity++;
+                quantityDisplay.textContent = quantity;
+                document.getElementById('quantityInput').value = quantity;
+                updateTotalPrice();
+            }
         });
 
         function showDetailedView(category) {
@@ -424,33 +989,58 @@
             backBtn.classList.add('show');
             
             const categoryTitles = {
-                housekeeping: 'Housekeeping Requests',
-                maintenance: 'Maintenance Requests',
-                reception: 'Reception / Front Desk Requests'
+                housekeeping: translations[currentLang].housekeepingTitle,
+                maintenance: translations[currentLang].maintenanceTitle,
+                reception: translations[currentLang].receptionTitle,
+                roomservice: translations[currentLang].roomserviceTitle
             };
             pageTitle.textContent = categoryTitles[category];
 
+            if (category === 'roomservice') {
+                quantityContainer.style.display = 'block';
+                totalPriceBox.classList.add('show');
+                quantity = 1;
+                quantityDisplay.textContent = '1';
+                document.getElementById('quantityInput').value = '1';
+            } else {
+                quantityContainer.style.display = 'none';
+                totalPriceBox.classList.remove('show');
+            }
+
             detailedList.innerHTML = '';
-            requests[category].forEach(request => {
+            const localizedRequests = requestsTranslations[currentLang][category];
+            
+            requests[category].forEach((request, index) => {
                 const item = document.createElement('button');
                 item.type = 'button';
                 item.className = 'detailed-item';
-                item.textContent = request;
+                const localizedLabel = localizedRequests[index] ? localizedRequests[index].label : request.label;
+                item.innerHTML = `
+                    <span class="emoji">${request.emoji}</span>
+                    <span class="label">${localizedLabel}</span>
+                    ${request.price ? `<span class="label" style="font-weight:600">${request.price}</span>` : ''}
+                `;
                 item.addEventListener('click', function() {
                     document.querySelectorAll('.detailed-item').forEach(i => i.classList.remove('selected'));
                     this.classList.add('selected');
-                    selectedRequest = request;
+                    selectedRequest = request.text;
+                    
+                    if (category === 'roomservice' && request.priceNum) {
+                        selectedItemPrice = request.priceNum;
+                        updateTotalPrice();
+                    }
 
-                    // Set hidden inputs dynamically
                     const categoryMap = {
                         housekeeping: 'housekeeping_request',
                         maintenance: 'maintenance_request',
-                        reception: 'reception_request'
+                        reception: 'reception_request',
+                        roomservice: 'roomservice_order'
                     };
                     const urgencyMap = {
                         housekeeping: 'medium',
                         maintenance: 'high',
-                        reception: 'low'
+                        reception: 'low',
+                        roomservice: 'medium'
                     };
 
                     document.getElementById('categoryInput').value = categoryMap[category];
@@ -464,8 +1054,11 @@
             detailedView.classList.remove('active');
             categoryView.classList.add('active');
             backBtn.classList.remove('show');
-            pageTitle.textContent = 'Send a Request';
+            pageTitle.textContent = translations[currentLang].title;
             selectedRequest = '';
+            selectedItemPrice = 0;
+            quantityContainer.style.display = 'none';
+            totalPriceBox.classList.remove('show');
             document.querySelectorAll('.detailed-item').forEach(i => i.classList.remove('selected'));
         }
 
@@ -488,21 +1081,24 @@
             const feedback = feedbackArea.value.trim();
 
             if (!guestName) {
-                showStatus('Please enter your name', 'error');
+                showStatus(translations[currentLang].pleaseEnterName, 'error');
                 return;
             }
 
             if (!roomNumber) {
-                showStatus('Please enter your room number', 'error');
+                showStatus(translations[currentLang].pleaseEnterRoom, 'error');
                 return;
             }
 
             if (!selectedRequest) {
-                showStatus('Please select a request', 'error');
+                showStatus(translations[currentLang].pleaseSelectRequest, 'error');
                 return;
             }
 
             let requestText = selectedRequest;
+            if (currentCategory === 'roomservice') {
+                requestText += ` (Quantity: ${quantity})`;
+            }
             if (feedback) {
                 requestText += ' - Feedback: ' + feedback;
             }
@@ -510,7 +1106,7 @@
             const formData = new FormData(form);
             const payload = {
                 hotel_id: 'H001',
-                language: 'en',
+                language: currentLang,
                 request_text: requestText
             };
             
@@ -522,7 +1118,7 @@
 
             try {
                 submitBtn.disabled = true;
-                showStatus('Sending...', 'sending');
+                showStatus(translations[currentLang].sending, 'sending');
 
                 const response = await fetch('https://efdemo.app.n8n.cloud/webhook-test/fa5f3f64-bbe6-4590-8f94-60d4d4c832cf', {
                     method: 'POST',
@@ -533,21 +1129,23 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showStatus('Request sent successfully!', 'success');
+                    showStatus(translations[currentLang].requestSentSuccess, 'success');
                     progressBtn.classList.add('show');
                     submitBtn.style.display = 'none';
                     feedbackArea.value = '';
                     selectedRequest = '';
                     document.querySelectorAll('.detailed-item').forEach(i => i.classList.remove('selected'));
                 } else {
-                    showStatus('Failed to send request. Please try again.', 'error');
+                    showStatus(translations[currentLang].requestFailed, 'error');
                 }
             } catch (err) {
-                showStatus('Network error: ' + err.message, 'error');
+                showStatus(translations[currentLang].networkError + err.message, 'error');
             } finally {
                 submitBtn.disabled = false;
             }
         });
+
+        updateTranslations();
     </script>
 </body>
 </html>
