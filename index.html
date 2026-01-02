@@ -1,620 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send a Request</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<script>
+/* =======================
+   GLOBAL STATE
+======================= */
+let currentLang = "en";
+let currentTheme = "light";
+let selectedCategory = null;
+let selectedItem = null;
+let selectedQty = 1;
+let order = [];
 
-        :root {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: white;
-            --text-primary: #333;
-            --text-secondary: #555;
-            --border-color: #e0e0e0;
-            --accent-color: #4a90e2;
-            --accent-hover: #3a7bc8;
-            --hover-bg: #f8fafc;
-            --selected-bg: #e3f2fd;
-        }
+/* =======================
+   MOCK DATA (ITEMS)
+======================= */
+const ITEMS = {
+  housekeeping: [
+    { id: "towel", name: "Extra Towels", emoji: "🧻", price: 200 },
+    { id: "pillow", name: "Extra Pillow", emoji: "🛏️", price: 300 },
+    { id: "clean", name: "Room Cleaning", emoji: "🧹", price: 500 }
+  ],
+  maintenance: [
+    { id: "ac", name: "Air Conditioner", emoji: "❄️", price: 0 },
+    { id: "light", name: "Light Issue", emoji: "💡", price: 0 },
+    { id: "plumbing", name: "Plumbing", emoji: "🚿", price: 0 }
+  ],
+  reception: [
+    { id: "wake", name: "Wake-up Call", emoji: "⏰", price: 0 },
+    { id: "taxi", name: "Taxi Request", emoji: "🚕", price: 0 }
+  ],
+  roomservice: [
+    { id: "burger", name: "Burger", emoji: "🍔", price: 1200 },
+    { id: "pizza", name: "Pizza", emoji: "🍕", price: 1500 },
+    { id: "water", name: "Water", emoji: "🥤", price: 200 }
+  ]
+};
 
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --border-color: #404040;
-            --accent-color: #5ba3f5;
-            --accent-hover: #4a90e2;
-            --hover-bg: #383838;
-            --selected-bg: #2a4a6a;
-        }
+/* =======================
+   DOM ELEMENTS
+======================= */
+const categoryView = document.getElementById("categoryView");
+const detailedView = document.getElementById("detailedView");
+const detailedList = document.getElementById("detailedList");
+const backBtn = document.getElementById("backBtn");
+const quantityBox = document.getElementById("quantityContainer");
+const qtyDisplay = document.getElementById("quantityDisplay");
+const addToOrderBtn = document.getElementById("addToOrderBtn");
+const orderSummaryBox = document.getElementById("orderSummaryBox");
+const orderItemsList = document.getElementById("orderItemsList");
+const totalPriceBox = document.getElementById("totalPriceBox");
+const totalPriceAmount = document.getElementById("totalPriceAmount");
+const statusMessage = document.getElementById("statusMessage");
+const form = document.getElementById("requestForm");
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 20px;
-            min-height: 100vh;
-            transition: background-color 0.3s, color 0.3s;
-        }
+/* =======================
+   CATEGORY SELECTION
+======================= */
+document.querySelectorAll(".request-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedCategory = btn.dataset.category;
+    loadItems();
+    categoryView.classList.remove("active");
+    detailedView.classList.add("active");
+    backBtn.classList.add("show");
+  });
+});
 
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
-        }
+/* =======================
+   LOAD ITEMS
+======================= */
+function loadItems() {
+  detailedList.innerHTML = "";
+  resetSelection();
 
-        .top-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
+  ITEMS[selectedCategory].forEach(item => {
+    const el = document.createElement("div");
+    el.className = "detailed-item";
+    el.innerHTML = `
+      <span class="emoji">${item.emoji}</span>
+      <span class="label">${item.name}</span>
+    `;
+    el.onclick = () => selectItem(item, el);
+    detailedList.appendChild(el);
+  });
+}
 
-        .theme-toggle, .lang-switch {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-primary);
-            transition: all 0.2s;
-        }
+/* =======================
+   ITEM SELECTION
+======================= */
+function selectItem(item, element) {
+  document.querySelectorAll(".detailed-item").forEach(i => i.classList.remove("selected"));
+  element.classList.add("selected");
 
-        .theme-toggle:hover, .lang-switch:hover {
-            border-color: var(--accent-color);
-        }
+  selectedItem = item;
+  selectedQty = 1;
+  qtyDisplay.textContent = selectedQty;
 
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            text-align: center;
-            color: var(--text-primary);
-        }
+  quantityBox.style.display = "block";
+  addToOrderBtn.classList.add("show");
+  updateItemPrice();
+}
 
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--accent-color);
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 16px;
-            display: none;
-            align-items: center;
-            gap: 4px;
-        }
+/* =======================
+   QUANTITY CONTROL
+======================= */
+document.getElementById("increaseQty").onclick = () => {
+  selectedQty++;
+  qtyDisplay.textContent = selectedQty;
+  updateItemPrice();
+};
 
-        .back-btn.show {
-            display: flex;
-        }
+document.getElementById("decreaseQty").onclick = () => {
+  if (selectedQty > 1) selectedQty--;
+  qtyDisplay.textContent = selectedQty;
+  updateItemPrice();
+};
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
+/* =======================
+   ADD TO ORDER
+======================= */
+addToOrderBtn.onclick = () => {
+  const existing = order.find(i => i.id === selectedItem.id);
+  if (existing) {
+    existing.qty += selectedQty;
+  } else {
+    order.push({ ...selectedItem, qty: selectedQty });
+  }
+  resetSelection();
+  renderOrder();
+};
 
-        .request-btn {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            text-align: center;
-            flex-direction: column;
-            color: var(--text-primary);
-        }
+/* =======================
+   ORDER RENDER
+======================= */
+function renderOrder() {
+  orderItemsList.innerHTML = "";
+  let total = 0;
 
-        .request-btn:hover {
-            border-color: var(--accent-color);
-            background: var(--hover-bg);
-        }
+  order.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
 
-        .request-btn:active {
-            transform: scale(0.98);
-        }
-
-        .emoji {
-            font-size: 32px;
-            min-width: 32px;
-        }
-
-        .category-view,
-        .detailed-view {
-            display: none;
-        }
-
-        .category-view.active,
-        .detailed-view.active {
-            display: block;
-        }
-
-        .detailed-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .detailed-item {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-primary);
-        }
-
-        .detailed-item .emoji {
-            font-size: 28px;
-        }
-
-        .detailed-item .label {
-            font-size: 11px;
-            line-height: 1.2;
-        }
-
-        .detailed-item:hover {
-            border-color: var(--accent-color);
-            background: var(--hover-bg);
-        }
-
-        .detailed-item.selected {
-            border-color: var(--accent-color);
-            background: var(--selected-bg);
-        }
-
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 8px;
-        }
-
-        .quantity-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quantity-display {
-            font-size: 16px;
-            font-weight: 600;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-            transition: border-color 0.2s;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        input[type="text"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .submit-btn:hover {
-            background: var(--accent-hover);
-        }
-
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .progress-btn {
-            width: 100%;
-            background: #ff9800;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .progress-btn.show {
-            display: block;
-        }
-
-        .status-message {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            display: none;
-        }
-
-        .status-message.sending {
-            display: block;
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-message.success {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-message.error {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 32px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .footer img {
-            height: 48px;
-            width: auto;
-        }
-
-        .total-price-box {
-            background: var(--selected-bg);
-            border: 2px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 20px 0;
-            text-align: center;
-            display: none;
-        }
-
-        .total-price-box.show {
-            display: block;
-        }
-
-        .total-price-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .total-price-amount {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .order-summary-box {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .order-summary-box.show {
-            display: block;
-        }
-
-        .order-summary-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            margin-bottom: 8px;
-            background: var(--hover-bg);
-            border-radius: 6px;
-        }
-
-        .order-item-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .order-item-name {
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        .order-item-qty {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .order-item-price {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-color);
-        }
-
-        .order-item-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-
-        .add-to-order-btn {
-            width: 100%;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .add-to-order-btn.show {
-            display: block;
-        }
-
-        .add-to-order-btn:hover {
-            background: #218838;
-        }
-
-        @media (min-width: 600px) {
-            .button-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .detailed-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="top-controls">
-            <select class="lang-switch" id="langSwitch">
-                <option value="en">🇬🇧 English</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="ar">🇩🇿 العربية</option>
-            </select>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
+    const row = document.createElement("div");
+    row.className = "order-item";
+    row.innerHTML = `
+      <div class="order-item-info">
+        <span>${item.emoji}</span>
+        <div>
+          <div class="order-item-name">${item.name}</div>
+          <div class="order-item-qty">x${item.qty}</div>
         </div>
+      </div>
+      <div>
+        <span class="order-item-price">${itemTotal} DA</span>
+        <button class="order-item-remove">✕</button>
+      </div>
+    `;
 
-        <button class="back-btn" id="backBtn">← <span data-translate="back">Back</span></button>
-        <h1 id="pageTitle" data-translate="title">Send a Request</h1>
-        
-        <form id="requestForm">
-            <div class="form-group">
-                <label for="guestName" data-translate="guestName">Guest Name *</label>
-                <input type="text" id="guestName" name="guest_name" required placeholder="">
-            </div>
+    row.querySelector("button").onclick = () => {
+      order = order.filter(o => o.id !== item.id);
+      renderOrder();
+    };
 
-            <div class="form-group">
-                <label for="roomNumber" data-translate="roomNumber">Room Number *</label>
-                <input type="text" id="roomNumber" name="room_number" required placeholder="">
-            </div>
+    orderItemsList.appendChild(row);
+  });
 
-            <input type="hidden" name="category" id="categoryInput">
-            <input type="hidden" name="urgency" id="urgencyInput">
-            <input type="hidden" name="quantity" id="quantityInput" value="1">
+  orderSummaryBox.classList.toggle("show", order.length > 0);
+  totalPriceBox.classList.toggle("show", total > 0);
+  totalPriceAmount.textContent = total + " DA";
+}
 
-            <div class="category-view active" id="categoryView">
-                <div class="button-grid">
-                    <button type="button" class="request-btn" data-category="housekeeping">
-                        <span class="emoji">🧹</span>
-                        <span data-translate="housekeeping">Housekeeping</span>
-                    </button>
-                    <button type="button" class="request-btn" data-category="maintenance">
-                        <span class="emoji">🛠</span>
-                        <span data-translate="maintenance">Maintenance</span>
-                    </button>
-                    <button type="button" class="request-btn" data-category="reception">
-                        <span class="emoji">☎</span>
-                        <span data-translate="reception">Reception</span>
-                    </button>
-                    <button type="button" class="request-btn" data-category="roomservice">
-                        <span class="emoji">🍽️</span>
-                        <span data-translate="roomservice">Room Service</span>
-                    </button>
-                </div>
-            </div>
+/* =======================
+   FORM SUBMIT
+======================= */
+form.onsubmit = e => {
+  e.preventDefault();
+  if (order.length === 0) return;
 
-            <div class="detailed-view" id="detailedView">
-                <div class="order-summary-box" id="orderSummaryBox">
-                    <div class="order-summary-title" data-translate="yourOrder">Your Order</div>
-                    <div id="orderItemsList"></div>
-                </div>
+  statusMessage.className = "status-message sending";
+  statusMessage.textContent = translations[currentLang].sending;
 
-                <div class="detailed-grid" id="detailedList"></div>
-                
-                <div class="total-price-box" id="totalPriceBox">
-                    <div class="total-price-label" data-translate="itemPrice">Item Price</div>
-                    <div class="total-price-amount" id="totalPriceAmount">0 DA</div>
-                </div>
+  setTimeout(() => {
+    statusMessage.className = "status-message success";
+    statusMessage.textContent = translations[currentLang].staffAssigned;
 
-                <div id="quantityContainer" style="display: none; margin-bottom: 20px; text-align: center;">
-                    <label data-translate="quantity">Quantity</label>
-                    <div class="quantity-control">
-                        <button type="button" class="quantity-btn" id="decreaseQty">−</button>
-                        <span class="quantity-display" id="quantityDisplay">1</span>
-                        <button type="button" class="quantity-btn" id="increaseQty">+</button>
-                    </div>
-                </div>
+    setTimeout(resetAll, 3000);
+  }, 10000);
+};
 
-                <button type="button" class="add-to-order-btn" id="addToOrderBtn" data-translate="addToOrder">Add to Order</button>
-            </div>
+/* =======================
+   RESET EVERYTHING
+======================= */
+function resetAll() {
+  form.reset();
+  order = [];
+  resetSelection();
+  renderOrder();
 
-            <div class="form-group">
-                <label for="feedback" data-translate="feedback">Feedback (Optional)</label>
-                <textarea id="feedback" name="feedback" placeholder=""></textarea>
-            </div>
+  detailedView.classList.remove("active");
+  categoryView.classList.add("active");
+  backBtn.classList.remove("show");
+  statusMessage.style.display = "none";
+}
 
-            <button type="submit" class="submit-btn" id="submitBtn" data-translate="sendRequest">Send Request</button>
-            <button type="button" class="progress-btn" id="progressBtn" data-translate="requestProgress">Request in Progress</button>
+function resetSelection() {
+  selectedItem = null;
+  selectedQty = 1;
+  quantityBox.style.display = "none";
+  addToOrderBtn.classList.remove("show");
+  totalPriceBox.classList.remove("show");
+  document.querySelectorAll(".detailed-item").forEach(i => i.classList.remove("selected"));
+}
 
-            <div class="status-message" id="statusMessage"></div>
-        </form>
+function updateItemPrice() {
+  if (!selectedItem) return;
+  totalPriceBox.classList.add("show");
+  totalPriceAmount.textContent = (selectedItem.price * selectedQty) + " DA";
+}
 
-        <div class="footer">
-            <span>Developed by EFYOOS</span>
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHg9IjEwMCIgeT0iMTAwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzFhM2M1YSIvPgo8cmVjdCB4PSIyNTAiIHk9IjEwMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiM2Yzc1N2QiLz4KPHJlY3QgeD0iMTAwIiB5PSIyNTAiIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNGY4YThhIi8+CjxyZWN0IHg9IjI1MCIgeT0iMjUwIiB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzY3Nzg4YSIvPgo8Y2lyY2xlIGN4PSIyNTAiIGN5PSIyNTAiIHI9IjgwIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjUwIDIyMEwyMjAgMjgwSDI4MEwyNTAgMjIwWiIgZmlsbD0iIzRmOGE4YSIvPgo8cGF0aCBkPSJNMjUwIDI4MEwyMjAgMzIwSDI4MEwyNTAgMjgwWiIgZmlsbD0iIzFhM2M1YSIvPgo8L3N2Zz4=" alt="EFYOOS Logo">
-        </div>
-    </div>
-
-    <script>
-        const translations = {
-            en: {
-                title: "Send a Request",
-                back: "Back",
-                guestName: "Guest Name *",
-                roomNumber: "Room Number *",
-                housekeeping: "Housekeeping",
-                maintenance: "Maintenance",
-                reception: "Reception",
-                roomservice: "Room Service",
-                feedback: "Feedback (Optional)",
-                sendRequest: "Send Request",
-                requestProgress: "Request in Progress",
-                quantity: "Quantity",
-                housekeepingTitle: "Housekeeping Requests",
-                maintenanceTitle: "Maintenance Requests",
-                receptionTitle: "Reception Requests",
-                roomserviceTitle: "Room Service Menu",
-                pleaseEnterName: "Please enter your name",
-                pleaseEnterRoom: "Please enter your room number",
-                pleaseSelectRequest: "Please select a request",
-                sending: "Sending...",
-                requestSentSuccess: "Request sent successfully!",
-                requestFailed: "Failed to send request. Please try again.",
-                networkError: "Network error: ",
-                poweredBy: "Powered by",
-                totalPrice: "Total Price",
-                itemPrice: "Item Price",
-                yourOrder: "Your Order",
-                addToOrder: "Add to Order",
-                remove: "Remove",
-                staffAssigned: "Thank you! A staff member has been assigned to handle your request and will be with you shortly."
-            },
-            fr: {
-                title: "Envoyer une Demande",
-                back: "Retour",
-                guestName: "Nom du Client *",
-                roomNumber: "Numéro de Chambre *",
-                housekeeping: "Ménage",
-                maintenance: "Maintenance",
-                reception: "Réception",
-                roomservice: "Service de Chambre",
-                feedback: "Commentaires (Facultatif)",
-                sendRequest: "Envoyer la Demande",
-                requestProgress: "Demande en Cours",
-                quantity: "Quantité",
-                housekeepingTitle: "Demandes de Ménage",
-                maintenanceTitle: "Demandes de Maintenance",
-                receptionTitle: "Demandes de Réception",
-                roomserviceTitle: "Menu du Service",
-                pleaseEnterName: "Veuillez entrer votre nom",
-                pleaseEnterRoom: "Veuillez entrer votre numéro de chambre",
-                pleaseSelectRequest: "Veuillez sélectionner une demande",
-                sending: "Envoi en cours...",
-                requestSentSuccess: "Demande envoyée avec succès!",
-                requestFailed: "Échec de l'envoi. Veuillez réessayer.",
-                networkError: "Erreur réseau: ",
-                poweredBy: "Propulsé par",
-                totalPrice: "Prix Total",
-                itemPrice: "Prix de l'Article",
-                yourOrder: "Votre Commande",
-                addToOrder: "Ajouter à la Commande",
-             
+/* =======================
+   BACK BUTTON
+======================= */
+backBtn.onclick = () => {
+  detailedView.classList.remove("active");
+  categoryView.classList.add("active");
+  backBtn.classList.remove("show");
+};
+</script>
