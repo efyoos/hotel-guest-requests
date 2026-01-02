@@ -366,92 +366,6 @@
             color: var(--accent-color);
         }
 
-        .order-summary-box {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .order-summary-box.show {
-            display: block;
-        }
-
-        .order-summary-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            margin-bottom: 8px;
-            background: var(--hover-bg);
-            border-radius: 6px;
-        }
-
-        .order-item-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .order-item-name {
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        .order-item-qty {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .order-item-price {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-color);
-        }
-
-        .order-item-remove {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-
-        .add-to-order-btn {
-            width: 100%;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .add-to-order-btn.show {
-            display: block;
-        }
-
-        .add-to-order-btn:hover {
-            background: #218838;
-        }
-
         @media (min-width: 600px) {
             .button-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -513,15 +427,10 @@
             </div>
 
             <div class="detailed-view" id="detailedView">
-                <div class="order-summary-box" id="orderSummaryBox">
-                    <div class="order-summary-title" data-translate="yourOrder">Your Order</div>
-                    <div id="orderItemsList"></div>
-                </div>
-
                 <div class="detailed-grid" id="detailedList"></div>
                 
                 <div class="total-price-box" id="totalPriceBox">
-                    <div class="total-price-label" data-translate="itemPrice">Item Price</div>
+                    <div class="total-price-label" data-translate="totalPrice">Total Price</div>
                     <div class="total-price-amount" id="totalPriceAmount">0 DA</div>
                 </div>
 
@@ -533,8 +442,6 @@
                         <button type="button" class="quantity-btn" id="increaseQty">+</button>
                     </div>
                 </div>
-
-                <button type="button" class="add-to-order-btn" id="addToOrderBtn" data-translate="addToOrder">Add to Order</button>
             </div>
 
             <div class="form-group">
@@ -581,12 +488,7 @@
                 requestFailed: "Failed to send request. Please try again.",
                 networkError: "Network error: ",
                 poweredBy: "Powered by",
-                totalPrice: "Total Price",
-                itemPrice: "Item Price",
-                yourOrder: "Your Order",
-                addToOrder: "Add to Order",
-                remove: "Remove",
-                staffAssigned: "Thank you! A staff member has been assigned to handle your request and will be with you shortly."
+                totalPrice: "Total Price"
             },
             fr: {
                 title: "Envoyer une Demande",
@@ -613,8 +515,65 @@
                 requestFailed: "Échec de l'envoi. Veuillez réessayer.",
                 networkError: "Erreur réseau: ",
                 poweredBy: "Propulsé par",
-                totalPrice: "Prix Total",
-                itemPrice: "Prix de l'Article",
-                yourOrder: "Votre Commande",
-                addToOrder: "Ajouter à la Commande",
-             
+                totalPrice: "Prix Total"
+            },
+            ar: {
+                title: "إرسال طلب",
+                back: "رجوع",
+                guestName: "اسم الضيف *",
+                roomNumber: "رقم الغرفة *",
+                housekeeping: "التدبير المنزلي",
+                maintenance: "الصيانة",
+                reception: "الاستقبال",
+                roomservice: "خدمة الغرف",
+                feedback: "ملاحظات (اختياري)",
+                sendRequest: "إرسال الطلب",
+                requestProgress: "الطلب قيد التنفيذ",
+                quantity: "الكمية",
+                housekeepingTitle: "طلبات التدبير المنزلي",
+                maintenanceTitle: "طلبات الصيانة",
+                receptionTitle: "طلبات الاستقبال",
+                roomserviceTitle: "قائمة خدمة الغرف",
+                pleaseEnterName: "الرجاء إدخال اسمك",
+                pleaseEnterRoom: "الرجاء إدخال رقم غرفتك",
+                pleaseSelectRequest: "الرجاء اختيار طلب",
+                sending: "جاري الإرسال...",
+                requestSentSuccess: "تم إرسال الطلب بنجاح!",
+                requestFailed: "فشل إرسال الطلب. حاول مرة أخرى.",
+                networkError: "خطأ في الشبكة: ",
+                poweredBy: "مدعوم بواسطة",
+                totalPrice: "السعر الإجمالي"
+            }
+        };
+
+        const requestsTranslations = {
+            en: {
+                housekeeping: [
+                    { emoji: "🧻", label: "Towels" },
+                    { emoji: "🛏️", label: "Pillows" },
+                    { emoji: "🛏️", label: "Bedsheets" },
+                    { emoji: "🧹", label: "Cleaning" },
+                    { emoji: "☕", label: "Coffee/Tea" },
+                    { emoji: "🧻", label: "Toilet Paper" },
+                    { emoji: "👔", label: "Hangers" },
+                    { emoji: "🧺", label: "Towel Replace" },
+                    { emoji: "🌙", label: "Turndown" },
+                    { emoji: "🗑️", label: "Trash" },
+                    { emoji: "🛁", label: "Bath Mat" },
+                    { emoji: "🛌", label: "Blankets" },
+                    { emoji: "🧹", label: "Not Cleaned" },
+                    { emoji: "🛏️", label: "Pillow Type" },
+                    { emoji: "👶", label: "Crib Bedding" },
+                    { emoji: "🧼", label: "Sanitize" },
+                    { emoji: "⏰", label: "Early Clean" },
+                    { emoji: "🧺", label: "Laundry" },
+                    { emoji: "💧", label: "Minibar Water" },
+                    { emoji: "🥿", label: "Slippers" }
+                ],
+                maintenance: [
+                    { emoji: "❄️", label: "AC Not Cool" },
+                    { emoji: "📺", label: "TV Remote" },
+                    { emoji: "🚽", label: "Toilet Clog" },
+                    { emoji: "🚿", label: "Drain Block" },
+                    { emoji: "🔥", label: "Hot Water" },
+                    { emoji: "💡", label
